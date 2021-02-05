@@ -20,3 +20,4 @@ Route::get('/', function () {
 
 
 WebSocketsRouter::webSocket('/tryout', \App\SocketHandlers\TestSocketHandler::class);
+WebSocketsRouter::webSocket('/player', \App\SocketHandlers\PlayerSocketHandler::class);

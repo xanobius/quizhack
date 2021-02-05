@@ -10,8 +10,8 @@
     </head>
     <body class="antialiased">
         <div id="app">
-            the component
-            <wstest></wstest>
+
+            <player-view></player-view>
         </div>
     <script src="{{ asset('js/app.js') }}"></script>
     </body>
