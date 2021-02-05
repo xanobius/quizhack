@@ -1884,13 +1884,14 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   created: function created() {
-    console.log('dini mama'); // this.connect();
+    console.log('dini mama');
+    this.connect();
   },
   methods: {
     connect: function connect() {
       var _this = this;
 
-      this.connection = new WebSocket('');
+      this.connection = new WebSocket('ws://websockets.test:6001/player');
 
       this.connection.onmessage = function (event) {
         console.log(event.data);
@@ -1907,6 +1908,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     // Method to login
     login: function login() {
+      // Send nick to backend and create player
       this.joined = true;
     } // Method to answer question
 

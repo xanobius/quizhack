@@ -38,11 +38,11 @@ export default {
     },
     created() {
         console.log('dini mama');
-        // this.connect();
+        this.connect();
     },
     methods : {
         connect() {
-            this.connection = new WebSocket('');
+            this.connection = new WebSocket('ws://websockets.test:6001/player');
             this.connection.onmessage = event => {
                 console.log(event.data);
             }
@@ -57,6 +57,8 @@ export default {
 
         // Method to login
         login() {
+            // Send nick to backend and create player
+
             this.joined = true
         }
         // Method to answer question
