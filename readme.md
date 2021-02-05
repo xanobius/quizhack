@@ -24,16 +24,39 @@ Should you use this scaffold for a framework other than laravel, make sure the d
 
 Change the values to your favorite settings.
 
+
 Now, start the environment and install the dependencies:
 
 ```
-docker-compose up -d
+[project-root]> docker-compose up -d
 docker-compose exec app composer install
 ```
 
 since the framework is in the sub-directory _src_ the npm commands should be executed there
 
 ```
-cd src
+[project-root]> cd src
+npm install
 npm run watch
+```
+
+Also, the .env file must be added and filled with data and an encryption key (can be done via command)
+
+```
+[project-root]> cd src
+cp .env.example .env
+[change DB settings in .env file]
+```
+
+Application secret:
+
+```
+[project-root]> docker-compose exec app php artisan key:generate
+```
+
+
+start the websocket server (keep terminal open to watch transactions)
+
+```
+[project-root]> docker-compose exec app php artisan websockets:serve
 ```
