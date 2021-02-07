@@ -22,6 +22,15 @@ Route::get('mod', function() {
     return view('moderator');
 });
 
+Route::get('test', function() {
+    return view('test');
+});
+
+
+Route::get('send', function() {
+    broadcast(new \App\Events\NewQuestion('Do broadcast'));
+    return "send";
+});
 
 WebSocketsRouter::webSocket('/tryout', \App\SocketHandlers\TestSocketHandler::class);
 WebSocketsRouter::webSocket('/player', \App\SocketHandlers\PlayerSocketHandler::class);

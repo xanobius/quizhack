@@ -1895,6 +1895,9 @@ __webpack_require__.r(__webpack_exports__);
         email: '',
         password: ''
       },
+      questionFrm: {
+        question: ''
+      },
       loggedIn: false
     };
   },
@@ -1953,6 +1956,12 @@ __webpack_require__.r(__webpack_exports__);
     checkLogin: function checkLogin() {
       this.connection.send(JSON.stringify({
         action: 'checkLogin'
+      }));
+    },
+    askQuestion: function askQuestion() {
+      this.connection.send(JSON.stringify({
+        action: 'askQuestion',
+        question: this.questionFrm.question
       }));
     }
   }
@@ -2054,9 +2063,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var laravel_echo__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! laravel-echo */ "./node_modules/laravel-echo/dist/echo.js");
-/* harmony import */ var pusher_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
-/* harmony import */ var pusher_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(pusher_js__WEBPACK_IMPORTED_MODULE_1__);
 //
 //
 //
@@ -2074,18 +2080,29 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-
-
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  components: {
+    'Echo': Echo
+  },
   name: "WSTest.vue",
   data: function data() {
     return {
       message: '',
       connection: null,
-      connected: false
+      connected: false,
+      questions: [],
+      answers: []
     };
   },
-  created: function created() {},
+  created: function created() {
+    window.Echo.channel('quiz.questions').listen('NewQuestion', function (e) {
+      console.log(e);
+    });
+  },
   methods: {
     connect: function connect() {
       var _this = this;
@@ -25972,21 +25989,40 @@ var render = function() {
         ])
       : _vm._e(),
     _vm._v(" "),
-    _vm.loggedIn ? _c("div", [_vm._m(0)]) : _vm._e()
+    _vm.loggedIn
+      ? _c("div", [
+          _c("div", [
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.questionFrm.question,
+                  expression: "questionFrm.question"
+                }
+              ],
+              attrs: { type: "text", placeholder: "next question: " },
+              domProps: { value: _vm.questionFrm.question },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.questionFrm, "question", $event.target.value)
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("input", {
+              attrs: { type: "button", value: "ask question" },
+              on: { click: _vm.askQuestion }
+            })
+          ])
+        ])
+      : _vm._e()
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("input", { attrs: { type: "text", placeholder: "next question: " } }),
-      _vm._v(" "),
-      _c("input", { attrs: { type: "button", value: "ask question" } })
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -26105,6 +26141,8 @@ var render = function() {
       [_vm._v("\n        Connect\n    ")]
     ),
     _vm._v(" "),
+    _vm._m(0),
+    _vm._v(" "),
     _c("div", { staticClass: "col-1" }, [
       _c(
         "button",
@@ -26118,7 +26156,14 @@ var render = function() {
     ])
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("ul", [_c("li")])
+  }
+]
 render._withStripped = true
 
 
@@ -38268,18 +38313,6 @@ Vue.compile = compileToFunctions;
 /******/ 	// It's empty as some runtime module handles the default behavior
 /******/ 	__webpack_require__.x = x => {};
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter functions for harmony exports

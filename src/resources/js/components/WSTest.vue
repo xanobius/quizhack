@@ -9,6 +9,10 @@
         <button class="btn-success btn" @click="connect">
             Connect
         </button>
+        <ul>
+            <li></li>
+        </ul>
+
         <div class="col-1">
             <button class="btn btn-success" :disabled=" ! connected" @click="sendText">Send</button>
         </div>
@@ -17,20 +21,25 @@
 
 <script>
 
-import Echo from "laravel-echo"
-import Pusher from 'pusher-js'
-
 export default {
+    components : {
+        'Echo' : Echo
+    },
     name: "WSTest.vue",
     data () {
         return {
             message: '',
             connection: null,
             connected : false,
+            questions : [],
+            answers: []
         }
     },
     created() {
-
+        window.Echo.channel('quiz.questions')
+            .listen('NewQuestion', (e) => {
+                console.log(e);
+            })
     },
     methods: {
         connect() {

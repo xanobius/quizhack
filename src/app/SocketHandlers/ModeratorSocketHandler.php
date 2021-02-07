@@ -4,6 +4,7 @@
 namespace App\SocketHandlers;
 
 
+use App\Events\NewQuestion;
 use BeyondCode\LaravelWebSockets\Apps\App;
 use Ratchet\ConnectionInterface;
 use Ratchet\RFC6455\Messaging\MessageInterface;
@@ -54,6 +55,10 @@ class ModeratorSocketHandler implements \Ratchet\WebSocket\MessageComponentInter
                         break;
                     case 'checkLogin':
                         $this->checkLogin($conn);
+                        break;
+                    case 'askQuestion':
+                        $this->askQuestion($data->question);
+                        break;
                     default:
                 }
             }else{
@@ -62,6 +67,12 @@ class ModeratorSocketHandler implements \Ratchet\WebSocket\MessageComponentInter
         }else{
             $this->returnError($conn, 'Invalid payload');
         }
+    }
+
+    protected function askQuestion($q)
+    {
+        NewQuestion::broadcast($q);
+        echo "Ask the question: " . $q;
     }
 
     protected function checkLogin(ConnectionInterface $conn)

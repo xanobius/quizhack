@@ -27,8 +27,8 @@
 
         <div v-if="loggedIn">
             <div>
-                <input type="text" placeholder="next question: ">
-                <input type="button" value="ask question">
+                <input type="text" placeholder="next question: " v-model="questionFrm.question">
+                <input type="button" value="ask question" @click="askQuestion">
             </div>
         </div>
     </div>
@@ -49,6 +49,9 @@ export default {
             loginFrm : {
                 email : '',
                 password : ''
+            },
+            questionFrm : {
+                question : ''
             },
             loggedIn : false
         }
@@ -100,6 +103,9 @@ export default {
         },
         checkLogin(){
             this.connection.send(JSON.stringify({action: 'checkLogin'}))
+        },
+        askQuestion(){
+            this.connection.send(JSON.stringify({action: 'askQuestion', question : this.questionFrm.question }))
         }
     }
 }
