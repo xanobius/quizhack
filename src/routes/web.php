@@ -18,6 +18,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('mod', function() {
+    return view('moderator');
+});
+
 
 WebSocketsRouter::webSocket('/tryout', \App\SocketHandlers\TestSocketHandler::class);
 WebSocketsRouter::webSocket('/player', \App\SocketHandlers\PlayerSocketHandler::class);
