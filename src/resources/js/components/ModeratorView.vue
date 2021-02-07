@@ -1,6 +1,10 @@
 <template>
     <div>
-        <div v-if=" ! login">
+        <div v-if="status.show" :class="status.type">
+            <span>{{ status.message }}</span>
+        </div>
+
+        <div v-if=" ! loggedIn">
             <div>
                 <label for="email">
                     Email
@@ -14,9 +18,11 @@
                 </label>
             </div>
             <div>
-                <input type="submit" value="">
+                <input type="submit" value="login" @click="doLogin">
             </div>
-
+            <div>
+                <input type="button" value="check login" @click="checkLogin">
+            </div>
         </div>
     </div>
 </template>
@@ -26,15 +32,64 @@ export default {
     name: "ModeratorView",
     data() {
         return {
+            connection: null,
+            status : {
+                show: false,
+                type: '',
+                message: ''
+            },
+
             loginFrm : {
                 email : '',
                 password : ''
             },
-            login : false
+            loggedIn : false
         }
     },
     created () {
         console.log('loaded')
+        this.connect()
+    },
+    methods : {
+        connect() {
+            this.connection = new WebSocket('ws://websockets.test:6001/moderator');
+            this.connection.onmessage = event => {
+                let parsed = JSON.parse(event.data);
+                if( parsed ){
+                    this.status.show= true
+                    if(parsed.success){
+                        this.status.type = 'success'
+                        this.status.message = parsed.data.message
+                    }else{
+                        this.status.type = 'alert'
+                        this.status.message = parsed.error
+                    }
+                }else{
+                    console.log(event.data);
+                }
+            }
+
+            this.connection.onopen = event => {
+                console.log(event);
+                this.connected = true;
+            }
+            this.connection.onclose = event => {
+                this.connected = false;
+            }
+        },
+        doLogin() {
+            let msg = JSON.stringify({
+                action : 'login',
+                data : {
+                    email : this.loginFrm.email,
+                    password : this.loginFrm.password
+                }
+            })
+            this.connection.send(msg)
+        },
+        checkLogin(){
+            this.connection.send(JSON.stringify({action: 'checkLogin'}))
+        }
     }
 }
 </script>

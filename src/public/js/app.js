@@ -1868,19 +1868,81 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "ModeratorView",
   data: function data() {
     return {
+      connection: null,
+      status: {
+        show: false,
+        type: '',
+        message: ''
+      },
       loginFrm: {
         email: '',
         password: ''
       },
-      login: false
+      loggedIn: false
     };
   },
   created: function created() {
     console.log('loaded');
+    this.connect();
+  },
+  methods: {
+    connect: function connect() {
+      var _this = this;
+
+      this.connection = new WebSocket('ws://websockets.test:6001/moderator');
+
+      this.connection.onmessage = function (event) {
+        var parsed = JSON.parse(event.data);
+
+        if (parsed) {
+          _this.status.show = true;
+
+          if (parsed.success) {
+            _this.status.type = 'success';
+            _this.status.message = parsed.data.message;
+          } else {
+            _this.status.type = 'alert';
+            _this.status.message = parsed.error;
+          }
+        } else {
+          console.log(event.data);
+        }
+      };
+
+      this.connection.onopen = function (event) {
+        console.log(event);
+        _this.connected = true;
+      };
+
+      this.connection.onclose = function (event) {
+        _this.connected = false;
+      };
+    },
+    doLogin: function doLogin() {
+      var msg = JSON.stringify({
+        action: 'login',
+        data: {
+          email: this.loginFrm.email,
+          password: this.loginFrm.password
+        }
+      });
+      this.connection.send(msg);
+    },
+    checkLogin: function checkLogin() {
+      this.connection.send(JSON.stringify({
+        action: 'checkLogin'
+      }));
+    }
   }
 });
 
@@ -25822,7 +25884,13 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    !_vm.login
+    _vm.status.show
+      ? _c("div", { class: _vm.status.type }, [
+          _c("span", [_vm._v(_vm._s(_vm.status.message))])
+        ])
+      : _vm._e(),
+    _vm._v(" "),
+    !_vm.loggedIn
       ? _c("div", [
           _c("div", [
             _c("label", { attrs: { for: "email" } }, [
@@ -25876,19 +25944,24 @@ var render = function() {
             ])
           ]),
           _vm._v(" "),
-          _vm._m(0)
+          _c("div", [
+            _c("input", {
+              attrs: { type: "submit", value: "login" },
+              on: { click: _vm.doLogin }
+            })
+          ]),
+          _vm._v(" "),
+          _c("div", [
+            _c("input", {
+              attrs: { type: "button", value: "check login" },
+              on: { click: _vm.checkLogin }
+            })
+          ])
         ])
       : _vm._e()
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [_c("input", { attrs: { type: "submit", value: "" } })])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
