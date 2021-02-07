@@ -1899,7 +1899,6 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   created: function created() {
-    console.log('loaded');
     this.connect();
   },
   methods: {
@@ -1919,8 +1918,9 @@ __webpack_require__.r(__webpack_exports__);
       };
 
       this.connection.onopen = function (event) {
-        console.log(event);
-        _this.connected = true;
+        _this.connected = true; // Maybe already logged in, directly load main mask
+
+        if (_this.connection) _this.checkLogin();
       };
 
       this.connection.onclose = function (event) {
@@ -1937,6 +1937,8 @@ __webpack_require__.r(__webpack_exports__);
         this.status.type = 'success';
         this.status.message = data.data.message;
       }
+
+      this.loggedIn = data.login_state;
     },
     doLogin: function doLogin() {
       var msg = JSON.stringify({
@@ -25981,7 +25983,7 @@ var staticRenderFns = [
     return _c("div", [
       _c("input", { attrs: { type: "text", placeholder: "next question: " } }),
       _vm._v(" "),
-      _c("input", { attrs: { type: "button" } })
+      _c("input", { attrs: { type: "button", value: "ask question" } })
     ])
   }
 ]

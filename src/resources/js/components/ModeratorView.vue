@@ -28,7 +28,7 @@
         <div v-if="loggedIn">
             <div>
                 <input type="text" placeholder="next question: ">
-                <input type="button">
+                <input type="button" value="ask question">
             </div>
         </div>
     </div>
@@ -54,7 +54,6 @@ export default {
         }
     },
     created () {
-        console.log('loaded')
         this.connect()
     },
     methods : {
@@ -70,8 +69,9 @@ export default {
             }
 
             this.connection.onopen = event => {
-                console.log(event);
                 this.connected = true;
+                // Maybe already logged in, directly load main mask
+                if(this.connection) this.checkLogin()
             }
             this.connection.onclose = event => {
                 this.connected = false;
@@ -86,6 +86,7 @@ export default {
                 this.status.type = 'success'
                 this.status.message = data.data.message
             }
+            this.loggedIn = data.login_state
         },
         doLogin() {
             let msg = JSON.stringify({

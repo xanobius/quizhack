@@ -88,11 +88,11 @@ class ModeratorSocketHandler implements \Ratchet\WebSocket\MessageComponentInter
 
     protected function returnSuccess(ConnectionInterface $conn, $payload)
     {
-        $conn->send(json_encode(['success' => true, 'data' => $payload]));
+        $conn->send(json_encode(['success' => true, 'data' => $payload, 'login_state' => auth()->check()]));
     }
 
     public function returnError(ConnectionInterface $conn, String $message)
     {
-        $conn->send(json_encode(['success' => false, 'error' => $message]));
+        $conn->send(json_encode(['success' => false, 'error' => $message, 'login_state' => auth()->check()]));
     }
 }
