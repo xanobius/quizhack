@@ -10,7 +10,7 @@
             Connect
         </button>
         <ul>
-            <li v-for="q in questions">{{ q }}</li>
+            <li v-for="q in questions">{{ q.question }}</li>
         </ul>
         <ul>
             <li v-for="a in answers">{{ a }}</li>

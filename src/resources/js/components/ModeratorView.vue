@@ -26,9 +26,20 @@
         </div>
 
         <div v-if="loggedIn">
-            <div>
-                <input type="text" placeholder="next question: " v-model="questionFrm.question">
-                <input type="button" value="ask question" @click="askQuestion">
+            <div v-if=" ! activeQuestion">
+                <form action="#" @submit.prevent="askQuestion">
+                    <div>
+                        <input type="text" placeholder="next question: " v-model="questionFrm.question">
+                        <input type="submit" value="ask question">
+                    </div>
+                </form>
+            </div>
+            <div v-if="activeQuestion">
+                Current Question : <span>{{ activeQuestion.question }}</span>
+                <ul>
+                    <li v-for="a in answers">{{ a }} <span>Correct</span> <span>Wrong</span> </li>
+                </ul>
+
             </div>
         </div>
     </div>
@@ -54,7 +65,9 @@ export default {
             questionFrm : {
                 question : ''
             },
-            loggedIn : false
+            loggedIn : false,
+            activeQuestion : null,
+            answers : []
         }
     },
     created () {
@@ -108,8 +121,8 @@ export default {
         askQuestion(){
             axios.post('question/ask', {'question' : this.questionFrm.question})
                 .then(e => {
-                    console.log('here we go')
-                    console.log(e)
+                    this.activeQuestion = e.data
+                    this.questionFrm.question = '';
                 })
                 .catch(e =>  {
                     console.log(e)

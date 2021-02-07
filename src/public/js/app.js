@@ -1881,6 +1881,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "ModeratorView",
   data: function data() {
@@ -1898,7 +1909,9 @@ __webpack_require__.r(__webpack_exports__);
       questionFrm: {
         question: ''
       },
-      loggedIn: false
+      loggedIn: false,
+      activeQuestion: null,
+      answers: []
     };
   },
   created: function created() {
@@ -1959,11 +1972,13 @@ __webpack_require__.r(__webpack_exports__);
       }));
     },
     askQuestion: function askQuestion() {
+      var _this2 = this;
+
       axios.post('question/ask', {
         'question': this.questionFrm.question
       }).then(function (e) {
-        console.log('here we go');
-        console.log(e);
+        _this2.activeQuestion = e.data;
+        _this2.questionFrm.question = '';
       })["catch"](function (e) {
         console.log(e);
       });
@@ -26002,33 +26017,74 @@ var render = function() {
     _vm._v(" "),
     _vm.loggedIn
       ? _c("div", [
-          _c("div", [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.questionFrm.question,
-                  expression: "questionFrm.question"
-                }
-              ],
-              attrs: { type: "text", placeholder: "next question: " },
-              domProps: { value: _vm.questionFrm.question },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.questionFrm, "question", $event.target.value)
-                }
-              }
-            }),
-            _vm._v(" "),
-            _c("input", {
-              attrs: { type: "button", value: "ask question" },
-              on: { click: _vm.askQuestion }
-            })
-          ])
+          !_vm.activeQuestion
+            ? _c("div", [
+                _c(
+                  "form",
+                  {
+                    attrs: { action: "#" },
+                    on: {
+                      submit: function($event) {
+                        $event.preventDefault()
+                        return _vm.askQuestion($event)
+                      }
+                    }
+                  },
+                  [
+                    _c("div", [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.questionFrm.question,
+                            expression: "questionFrm.question"
+                          }
+                        ],
+                        attrs: { type: "text", placeholder: "next question: " },
+                        domProps: { value: _vm.questionFrm.question },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.questionFrm,
+                              "question",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("input", {
+                        attrs: { type: "submit", value: "ask question" }
+                      })
+                    ])
+                  ]
+                )
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.activeQuestion
+            ? _c("div", [
+                _vm._v("\n            Current Question : "),
+                _c("span", [_vm._v(_vm._s(_vm.activeQuestion.question))]),
+                _vm._v(" "),
+                _c(
+                  "ul",
+                  _vm._l(_vm.answers, function(a) {
+                    return _c("li", [
+                      _vm._v(_vm._s(a) + " "),
+                      _c("span", [_vm._v("Correct")]),
+                      _vm._v(" "),
+                      _c("span", [_vm._v("Wrong")])
+                    ])
+                  }),
+                  0
+                )
+              ])
+            : _vm._e()
         ])
       : _vm._e()
   ])
@@ -26155,7 +26211,7 @@ var render = function() {
     _c(
       "ul",
       _vm._l(_vm.questions, function(q) {
-        return _c("li", [_vm._v(_vm._s(q))])
+        return _c("li", [_vm._v(_vm._s(q.question))])
       }),
       0
     ),
