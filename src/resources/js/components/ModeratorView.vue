@@ -24,6 +24,13 @@
                 <input type="button" value="check login" @click="checkLogin">
             </div>
         </div>
+
+        <div v-if="loggedIn">
+            <div>
+                <input type="text" placeholder="next question: ">
+                <input type="button">
+            </div>
+        </div>
     </div>
 </template>
 
@@ -56,14 +63,7 @@ export default {
             this.connection.onmessage = event => {
                 let parsed = JSON.parse(event.data);
                 if( parsed ){
-                    this.status.show= true
-                    if(parsed.success){
-                        this.status.type = 'success'
-                        this.status.message = parsed.data.message
-                    }else{
-                        this.status.type = 'alert'
-                        this.status.message = parsed.error
-                    }
+                    this.parseResponse(parsed)
                 }else{
                     console.log(event.data);
                 }
@@ -75,6 +75,16 @@ export default {
             }
             this.connection.onclose = event => {
                 this.connected = false;
+            }
+        },
+        parseResponse(data) {
+            this.status.show = true;
+            if(data.success != true){
+                this.status.type = 'alert'
+                this.status.message = data.error
+            }else{
+                this.status.type = 'success'
+                this.status.message = data.data.message
             }
         },
         doLogin() {

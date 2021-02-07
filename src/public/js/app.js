@@ -1874,6 +1874,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "ModeratorView",
   data: function data() {
@@ -1905,15 +1912,7 @@ __webpack_require__.r(__webpack_exports__);
         var parsed = JSON.parse(event.data);
 
         if (parsed) {
-          _this.status.show = true;
-
-          if (parsed.success) {
-            _this.status.type = 'success';
-            _this.status.message = parsed.data.message;
-          } else {
-            _this.status.type = 'alert';
-            _this.status.message = parsed.error;
-          }
+          _this.parseResponse(parsed);
         } else {
           console.log(event.data);
         }
@@ -1927,6 +1926,17 @@ __webpack_require__.r(__webpack_exports__);
       this.connection.onclose = function (event) {
         _this.connected = false;
       };
+    },
+    parseResponse: function parseResponse(data) {
+      this.status.show = true;
+
+      if (data.success != true) {
+        this.status.type = 'alert';
+        this.status.message = data.error;
+      } else {
+        this.status.type = 'success';
+        this.status.message = data.data.message;
+      }
     },
     doLogin: function doLogin() {
       var msg = JSON.stringify({
@@ -25958,10 +25968,23 @@ var render = function() {
             })
           ])
         ])
-      : _vm._e()
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.loggedIn ? _c("div", [_vm._m(0)]) : _vm._e()
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c("input", { attrs: { type: "text", placeholder: "next question: " } }),
+      _vm._v(" "),
+      _c("input", { attrs: { type: "button" } })
+    ])
+  }
+]
 render._withStripped = true
 
 

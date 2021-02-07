@@ -50,31 +50,39 @@ class ModeratorSocketHandler implements \Ratchet\WebSocket\MessageComponentInter
             if(property_exists($data, 'action')){
                 switch($data->action) {
                     case 'login':
-                        echo 'try to login with ' . $data->data->email . ' and ' . $data->data->password;
-                        if(auth()->attempt([
-                            'email' => $data->data->email,
-                            'password' => $data->data->password
-                        ]))
-                        {
-                            $this->returnSuccess($conn, ['message' => 'Successful login']);
-                        }else{
-                            $this->returnError($conn, 'Wrong login credentials');
-                        }
+                        $this->doLogin($conn, $data->data);
                         break;
                     case 'checkLogin':
-                        if(auth()->check()){
-                            $this->returnSuccess($conn, ['message' => 'Logged in']);
-                        }else{
-                            $this->returnError($conn, 'Nope, not logged in');
-                        }
+                        $this->checkLogin($conn);
                     default:
-
                 }
             }else{
                 $this->returnError($conn, 'Action parameter missing');
             }
         }else{
             $this->returnError($conn, 'Invalid payload');
+        }
+    }
+
+    protected function checkLogin(ConnectionInterface $conn)
+    {
+        if(auth()->check()){
+            $this->returnSuccess($conn, ['message' => 'Logged in']);
+        }else{
+            $this->returnError($conn, 'Nope, not logged in');
+        }
+    }
+
+    protected function doLogin(ConnectionInterface $conn, $creds)
+    {
+        if(auth()->attempt([
+            'email' => $creds->email,
+            'password' => $creds->password
+        ]))
+        {
+            $this->returnSuccess($conn, ['message' => 'Successful login']);
+        }else{
+            $this->returnError($conn, 'Wrong login credentials');
         }
     }
 
