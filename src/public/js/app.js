@@ -1959,10 +1959,14 @@ __webpack_require__.r(__webpack_exports__);
       }));
     },
     askQuestion: function askQuestion() {
-      this.connection.send(JSON.stringify({
-        action: 'askQuestion',
-        question: this.questionFrm.question
-      }));
+      axios.post('question/ask', {
+        'question': this.questionFrm.question
+      }).then(function (e) {
+        console.log('here we go');
+        console.log(e);
+      })["catch"](function (e) {
+        console.log(e);
+      });
     }
   }
 });
@@ -2084,6 +2088,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
     'Echo': Echo
@@ -2099,13 +2106,17 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   created: function created() {
+    var _this = this;
+
     window.Echo.channel('quiz.questions').listen('NewQuestion', function (e) {
+      _this.questions.push(e.question);
+
       console.log(e);
     });
   },
   methods: {
     connect: function connect() {
-      var _this = this;
+      var _this2 = this;
 
       this.connection = new WebSocket("ws://websockets.test:6001/tryout");
 
@@ -2115,11 +2126,11 @@ __webpack_require__.r(__webpack_exports__);
 
       this.connection.onopen = function (event) {
         console.log(event);
-        _this.connected = true;
+        _this2.connected = true;
       };
 
       this.connection.onclose = function (event) {
-        _this.connected = false;
+        _this2.connected = false;
       };
     },
     sendText: function sendText() {
@@ -26141,7 +26152,21 @@ var render = function() {
       [_vm._v("\n        Connect\n    ")]
     ),
     _vm._v(" "),
-    _vm._m(0),
+    _c(
+      "ul",
+      _vm._l(_vm.questions, function(q) {
+        return _c("li", [_vm._v(_vm._s(q))])
+      }),
+      0
+    ),
+    _vm._v(" "),
+    _c(
+      "ul",
+      _vm._l(_vm.answers, function(a) {
+        return _c("li", [_vm._v(_vm._s(a))])
+      }),
+      0
+    ),
     _vm._v(" "),
     _c("div", { staticClass: "col-1" }, [
       _c(
@@ -26156,14 +26181,7 @@ var render = function() {
     ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("ul", [_c("li")])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 

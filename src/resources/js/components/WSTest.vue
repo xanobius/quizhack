@@ -10,7 +10,10 @@
             Connect
         </button>
         <ul>
-            <li></li>
+            <li v-for="q in questions">{{ q }}</li>
+        </ul>
+        <ul>
+            <li v-for="a in answers">{{ a }}</li>
         </ul>
 
         <div class="col-1">
@@ -38,6 +41,7 @@ export default {
     created() {
         window.Echo.channel('quiz.questions')
             .listen('NewQuestion', (e) => {
+                this.questions.push(e.question)
                 console.log(e);
             })
     },

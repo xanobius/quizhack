@@ -35,6 +35,7 @@
 </template>
 
 <script>
+
 export default {
     name: "ModeratorView",
     data() {
@@ -105,7 +106,14 @@ export default {
             this.connection.send(JSON.stringify({action: 'checkLogin'}))
         },
         askQuestion(){
-            this.connection.send(JSON.stringify({action: 'askQuestion', question : this.questionFrm.question }))
+            axios.post('question/ask', {'question' : this.questionFrm.question})
+                .then(e => {
+                    console.log('here we go')
+                    console.log(e)
+                })
+                .catch(e =>  {
+                    console.log(e)
+                })
         }
     }
 }
