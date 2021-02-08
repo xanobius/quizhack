@@ -72,6 +72,11 @@ export default {
     },
     created () {
         this.connect()
+
+        window.Echo.channel('quiz.answers')
+            .listen('NewAnswer', (e) => {
+                this.answers.push(e.data)
+            })
     },
     methods : {
         connect() {

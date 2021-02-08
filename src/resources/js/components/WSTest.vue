@@ -9,6 +9,14 @@
         <button class="btn-success btn" @click="connect">
             Connect
         </button>
+
+        <div v-if="currentQuestion != null">
+            Question : {{ currentQuestion.question }} <br>
+            <form @submit.prevent="giveAnswer">
+                <input v-model="answer" type="text "/>
+                <input type="submit" value="antworten">
+            </form>
+        </div>
         <ul>
             <li v-for="q in questions">{{ q.question }}</li>
         </ul>
@@ -34,6 +42,8 @@ export default {
             message: '',
             connection: null,
             connected : false,
+            currentQuestion : null,
+            answer: '',
             questions : [],
             answers: []
         }
@@ -41,8 +51,13 @@ export default {
     created() {
         window.Echo.channel('quiz.questions')
             .listen('NewQuestion', (e) => {
+                this.currentQuestion = e.question
                 this.questions.push(e.question)
                 console.log(e);
+            })
+        window.Echo.channel('quiz.answers')
+            .listen('NewAnswer', (e) => {
+                this.answers.push(e.data)
             })
     },
     methods: {
@@ -63,8 +78,19 @@ export default {
             }
 
         },
-        sendText() {
+        sendText()
+        {
             this.connection.send(this.message);
+        },
+        giveAnswer()
+        {
+            axios.post('question/answer/' + this.currentQuestion.id, { answer : this.answer})
+                .then(e => {
+                    console.log(e)
+                })
+            .catch(e => {
+                console.log('ERROR')
+            })
         }
     },
 }

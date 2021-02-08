@@ -1915,11 +1915,16 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   created: function created() {
+    var _this = this;
+
     this.connect();
+    window.Echo.channel('quiz.answers').listen('NewAnswer', function (e) {
+      _this.answers.push(e.data);
+    });
   },
   methods: {
     connect: function connect() {
-      var _this = this;
+      var _this2 = this;
 
       this.connection = new WebSocket('ws://websockets.test:6001/moderator');
 
@@ -1927,20 +1932,20 @@ __webpack_require__.r(__webpack_exports__);
         var parsed = JSON.parse(event.data);
 
         if (parsed) {
-          _this.parseResponse(parsed);
+          _this2.parseResponse(parsed);
         } else {
           console.log(event.data);
         }
       };
 
       this.connection.onopen = function (event) {
-        _this.connected = true; // Maybe already logged in, directly load main mask
+        _this2.connected = true; // Maybe already logged in, directly load main mask
 
-        if (_this.connection) _this.checkLogin();
+        if (_this2.connection) _this2.checkLogin();
       };
 
       this.connection.onclose = function (event) {
-        _this.connected = false;
+        _this2.connected = false;
       };
     },
     parseResponse: function parseResponse(data) {
@@ -1972,13 +1977,13 @@ __webpack_require__.r(__webpack_exports__);
       }));
     },
     askQuestion: function askQuestion() {
-      var _this2 = this;
+      var _this3 = this;
 
       axios.post('question/ask', {
         'question': this.questionFrm.question
       }).then(function (e) {
-        _this2.activeQuestion = e.data;
-        _this2.questionFrm.question = '';
+        _this3.activeQuestion = e.data;
+        _this3.questionFrm.question = '';
       })["catch"](function (e) {
         console.log(e);
       });
@@ -2106,6 +2111,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
     'Echo': Echo
@@ -2116,6 +2129,8 @@ __webpack_require__.r(__webpack_exports__);
       message: '',
       connection: null,
       connected: false,
+      currentQuestion: null,
+      answer: '',
       questions: [],
       answers: []
     };
@@ -2124,9 +2139,14 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     window.Echo.channel('quiz.questions').listen('NewQuestion', function (e) {
+      _this.currentQuestion = e.question;
+
       _this.questions.push(e.question);
 
       console.log(e);
+    });
+    window.Echo.channel('quiz.answers').listen('NewAnswer', function (e) {
+      _this.answers.push(e.data);
     });
   },
   methods: {
@@ -2150,6 +2170,15 @@ __webpack_require__.r(__webpack_exports__);
     },
     sendText: function sendText() {
       this.connection.send(this.message);
+    },
+    giveAnswer: function giveAnswer() {
+      axios.post('question/answer/' + this.currentQuestion.id, {
+        answer: this.answer
+      }).then(function (e) {
+        console.log(e);
+      })["catch"](function (e) {
+        console.log('ERROR');
+      });
     }
   }
 });
@@ -26207,6 +26236,51 @@ var render = function() {
       { staticClass: "btn-success btn", on: { click: _vm.connect } },
       [_vm._v("\n        Connect\n    ")]
     ),
+    _vm._v(" "),
+    _vm.currentQuestion != null
+      ? _c("div", [
+          _vm._v(
+            "\n        Question : " + _vm._s(_vm.currentQuestion.question) + " "
+          ),
+          _c("br"),
+          _vm._v(" "),
+          _c(
+            "form",
+            {
+              on: {
+                submit: function($event) {
+                  $event.preventDefault()
+                  return _vm.giveAnswer($event)
+                }
+              }
+            },
+            [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.answer,
+                    expression: "answer"
+                  }
+                ],
+                attrs: { type: "text " },
+                domProps: { value: _vm.answer },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.answer = $event.target.value
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c("input", { attrs: { type: "submit", value: "antworten" } })
+            ]
+          )
+        ])
+      : _vm._e(),
     _vm._v(" "),
     _c(
       "ul",

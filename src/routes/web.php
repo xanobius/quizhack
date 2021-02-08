@@ -28,6 +28,7 @@ Route::get('test', function() {
 
 Route::group(['prefix' => 'question'], function() {
     Route::post('ask', [\App\Http\Controllers\QuestionController::class, 'askQuestion']);
+    Route::post('answer/{question}', [\App\Http\Controllers\QuestionController::class, 'answerQuestion']);
 });
 
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewAnswer;
 use App\Events\NewQuestion;
 use App\Models\Question;
 use Illuminate\Http\Request;
@@ -24,6 +25,7 @@ class QuestionController extends Controller
 
     public function answerQuestion(Request $request, Question $question)
     {
-
+        NewAnswer::broadcast('asdasdsad');
+        return $request->get('answer');
     }
 }
