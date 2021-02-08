@@ -25,7 +25,7 @@ class QuestionController extends Controller
 
     public function answerQuestion(Request $request, Question $question)
     {
-        NewAnswer::broadcast('asdasdsad');
+        NewAnswer::broadcast($request->get('answer'));
         return $request->get('answer');
     }
 }

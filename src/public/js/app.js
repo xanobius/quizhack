@@ -1919,7 +1919,7 @@ __webpack_require__.r(__webpack_exports__);
 
     this.connect();
     window.Echo.channel('quiz.answers').listen('NewAnswer', function (e) {
-      _this.answers.push(e.data);
+      _this.answers.push(e.answer);
     });
   },
   methods: {
@@ -2146,7 +2146,7 @@ __webpack_require__.r(__webpack_exports__);
       console.log(e);
     });
     window.Echo.channel('quiz.answers').listen('NewAnswer', function (e) {
-      _this.answers.push(e.data);
+      _this.answers.push(e.answer);
     });
   },
   methods: {

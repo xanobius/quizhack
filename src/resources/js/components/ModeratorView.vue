@@ -75,7 +75,7 @@ export default {
 
         window.Echo.channel('quiz.answers')
             .listen('NewAnswer', (e) => {
-                this.answers.push(e.data)
+                this.answers.push(e.answer)
             })
     },
     methods : {
