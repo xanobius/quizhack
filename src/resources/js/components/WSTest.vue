@@ -9,6 +9,21 @@
         <button class="btn-success btn" @click="connect">
             Connect
         </button>
+
+        <div v-if="currentQuestion != null">
+            Question : {{ currentQuestion.question }} <br>
+            <form @submit.prevent="giveAnswer">
+                <input v-model="answer" type="text "/>
+                <input type="submit" value="antworten">
+            </form>
+        </div>
+        <ul>
+            <li v-for="q in questions">{{ q.question }}</li>
+        </ul>
+        <ul>
+            <li v-for="a in answers">{{ a }}</li>
+        </ul>
+
         <div class="col-1">
             <button class="btn btn-success" :disabled=" ! connected" @click="sendText">Send</button>
         </div>
@@ -17,20 +32,33 @@
 
 <script>
 
-import Echo from "laravel-echo"
-import Pusher from 'pusher-js'
-
 export default {
+    components : {
+        'Echo' : Echo
+    },
     name: "WSTest.vue",
     data () {
         return {
             message: '',
             connection: null,
             connected : false,
+            currentQuestion : null,
+            answer: '',
+            questions : [],
+            answers: []
         }
     },
     created() {
-
+        window.Echo.channel('quiz.questions')
+            .listen('NewQuestion', (e) => {
+                this.currentQuestion = e.question
+                this.questions.push(e.question)
+                console.log(e);
+            })
+        window.Echo.channel('quiz.answers')
+            .listen('NewAnswer', (e) => {
+                this.answers.push(e.answer)
+            })
     },
     methods: {
         connect() {
@@ -50,8 +78,19 @@ export default {
             }
 
         },
-        sendText() {
+        sendText()
+        {
             this.connection.send(this.message);
+        },
+        giveAnswer()
+        {
+            axios.post('question/answer/' + this.currentQuestion.id, { answer : this.answer})
+                .then(e => {
+                    console.log(e)
+                })
+            .catch(e => {
+                console.log('ERROR')
+            })
         }
     },
 }

@@ -18,6 +18,25 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('mod', function() {
+    return view('moderator');
+});
+
+Route::get('test', function() {
+    return view('test');
+});
+
+Route::group(['prefix' => 'question'], function() {
+    Route::post('ask', [\App\Http\Controllers\QuestionController::class, 'askQuestion']);
+    Route::post('answer/{question}', [\App\Http\Controllers\QuestionController::class, 'answerQuestion']);
+});
+
+
+Route::get('send', function() {
+    broadcast(new \App\Events\NewQuestion('Do broadcast'));
+    return "send";
+});
 
 WebSocketsRouter::webSocket('/tryout', \App\SocketHandlers\TestSocketHandler::class);
 WebSocketsRouter::webSocket('/player', \App\SocketHandlers\PlayerSocketHandler::class);
+WebSocketsRouter::webSocket('/moderator', \App\SocketHandlers\ModeratorSocketHandler::class);
